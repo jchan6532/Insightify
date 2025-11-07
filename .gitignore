@@ -13,3 +13,16 @@ backend/uploads/
 .DS_Store
 .vscode/
 .idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# Env
+.env
+
+# IDE / editor
+.vscode/
+.idea/
