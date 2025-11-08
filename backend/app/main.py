@@ -1,8 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.routes_users import router as users_router
     
 
-app = FastAPI()
+app = FastAPI(
+    title="Insightify API",
+    version="1.0.0",
+    description="Backend for Insightify API."
+)
+
 
 # Allow your Vite dev origins
 origins = [
@@ -18,11 +24,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def root():
-    return {"message": "Hello from FastAPI backend!"}
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+# include routers
+app.include_router(users_router)
 
