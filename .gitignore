@@ -3,11 +3,15 @@ frontend/node_modules
 frontend/dist
 
 # Backend
-backend/__pycache__/
 backend/.venv/
 backend/.env
+backend/__pycache__/
 backend/.pytest_cache/
 backend/uploads/
+backend/*.db
+
+# DB
+*.db
 
 # OS & editor junk
 .DS_Store
@@ -18,11 +22,14 @@ backend/uploads/
 __pycache__/
 *.pyc
 *.pyo
-.venv/
+*.pyd
+*.log
 
 # Env
 .env
+venv/
+.venv/
 
-# IDE / editor
-.vscode/
-.idea/
+# SRS
+*.docx
+*.pdf
