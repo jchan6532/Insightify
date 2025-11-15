@@ -1,15 +1,21 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from uuid import UUID
 
-class UserCreate(BaseModel):
+class UserBase(BaseModel):
     email: EmailStr
     name: str | None = None
 
-class UserOut(BaseModel):
-    id: int
-    email: EmailStr
-    name: str | None
+class UserCreate(UserBase):
+    pass
+
+class UserOut(UserBase):
+    id: UUID
     created_at: datetime
     updated_at: datetime
     class Config:
         from_attributes = True
+
+class UserListOut(BaseModel):
+    users: list[UserOut]
+    total: int
