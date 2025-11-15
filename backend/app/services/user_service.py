@@ -9,8 +9,25 @@ def create_user(db: Session, data: UserCreate) -> User:
     db.refresh(user)
     return user
 
-def get_users(db: Session) -> list[User]:
-    return db.query(User).order_by(User.id.desc()).all()
+def get_users(
+    db: Session, 
+    skip: int = 0, 
+    limit: int | None = None
+) -> list[User]:
+    query = (
+        db.query(User)
+            .order_by(User.created_at.desc())
+            .offset(skip)
+        )
+    
+    if limit is not None:
+        query = query.limit(limit)
+
+    return query.all()
 
 def check_user_exists(db: Session, email: str) -> bool:
-    return db.query(User).filter(User.email == email).first() is not None
+    return (
+        db.query(User)
+            .filter(User.email == email)
+            .first()
+    ) is not None
