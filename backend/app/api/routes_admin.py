@@ -1,0 +1,27 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from backend.app.schemas.admin_schema import AdminResetRequest
+from sqlalchemy.orm import Session
+import os
+
+from app.services.admin_service import reset_database
+from app.db.session import get_db
+
+
+router = APIRouter(
+    prefix="/admin",
+    tags=["admin"]
+)
+
+ADMIN_RESET_PASSWORD = os.getenv("ADMIN_RESET_PASSWORD")
+
+@router.post("/reset-db")
+def reset_db_endpoint(
+    data: AdminResetRequest,
+    db: Session = Depends(get_db)
+):
+
+    if data.admin_password != ADMIN_RESET_PASSWORD:
+        raise HTTPException(status_code=401, detail="Invalid admin password")
+    
+    reset_database(db)
+    return {"detail": "Database cleared"}

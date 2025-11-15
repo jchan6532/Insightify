@@ -1,9 +1,6 @@
 from functools import lru_cache
 from pydantic import BaseModel
-from dotenv import load_dotenv
 import os
-
-load_dotenv()  # reads backend/.env
 
 class Settings(BaseModel):
     DATABASE_URL: str = "sqlite:///./app.db"
