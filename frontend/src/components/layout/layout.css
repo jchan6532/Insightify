@@ -2,9 +2,7 @@
 
 html,
 body,
-#root,
-.app,
-.content {
+#root {
   height: 100%;
   width: 100%;
   font-family: 'Source Sans Pro', sans-serif;
@@ -12,7 +10,15 @@ body,
 
 .app {
   display: flex;
-  position: relative;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+}
+
+.ps-sidebar-root {
+  height: 100vh;
 }
 
 ::-webkit-scrollbar {
