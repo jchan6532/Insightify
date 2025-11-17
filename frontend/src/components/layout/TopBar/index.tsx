@@ -6,12 +6,20 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useContext } from 'react';
+
+import { ColorModeContext } from '@/contexts';
 import { useAuthHook } from '@/hooks/useAuthHook';
 
 const Topbar = () => {
+  const { toggleColorMode } = useContext(ColorModeContext);
   const { logout } = useAuthHook();
   const handleLogout = async () => {
     await logout();
+  };
+
+  const handleToggleColorMode = () => {
+    toggleColorMode();
   };
 
   return (
@@ -24,7 +32,7 @@ const Topbar = () => {
       </Box>
 
       <Box display='flex'>
-        <IconButton>
+        <IconButton onClick={handleToggleColorMode}>
           <DarkModeOutlinedIcon />
         </IconButton>
         <IconButton>

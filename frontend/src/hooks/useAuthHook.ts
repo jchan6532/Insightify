@@ -1,4 +1,4 @@
-import { useAuth, type AuthContextValue } from '@/contexts/AuthContext';
+import { useAuth, type AuthContextValue } from '@/contexts/auth';
 
 export type AuthHookResult = AuthContextValue & {
   isLoggedIn: boolean;
