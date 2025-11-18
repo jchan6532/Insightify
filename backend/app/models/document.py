@@ -77,3 +77,8 @@ class Document(Base):
 
     # Relationships
     user: Mapped["User"] = relationship(back_populates="documents")
+
+    chunks: Mapped[list["DocChunk"]] = relationship(
+        back_populates="document",
+        cascade="all, delete-orphan",
+    )
