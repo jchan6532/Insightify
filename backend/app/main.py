@@ -4,6 +4,8 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes_users import router as users_router
+from app.api.routes_documents import router as document_router
+from app.api.routes_admin import router as admin_router
 
 app = FastAPI(
     title="Insightify API",
@@ -28,6 +30,8 @@ app.add_middleware(
 
 # include routers
 app.include_router(users_router)
+app.include_router(document_router)
+app.include_router(admin_router)
 
 @app.get("/health")
 def health():

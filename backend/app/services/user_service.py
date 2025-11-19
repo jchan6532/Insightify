@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.user_schema import UserCreate
+from uuid import UUID
 
 def create_user(db: Session, data: UserCreate) -> User:
     user = User(email=data.email, name=data.name)
@@ -25,9 +26,16 @@ def get_users(
 
     return query.all()
 
-def check_user_exists(db: Session, email: str) -> bool:
+def check_user_exists_by_email(db: Session, email: str) -> bool:
     return (
         db.query(User)
             .filter(User.email == email)
+            .first()
+    ) is not None
+
+def check_user_exists(db: Session, user_id: UUID) -> bool:
+    return (
+        db.query(User)
+            .filter(User.id == user_id)
             .first()
     ) is not None

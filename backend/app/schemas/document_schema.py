@@ -3,7 +3,7 @@ from datetime import datetime
 from uuid import UUID
 
 from app.enums.document_status import DocumentStatus
-from backend.app.enums.document_mime import DocumentMime
+from app.enums.document_mime import DocumentMime
 
 class DocumentBase(BaseModel):
     user_id: UUID
@@ -14,12 +14,14 @@ class DocumentBase(BaseModel):
     source: str
     checksum: str | None = None
 
-class DocumentCreate(DocumentBase):
-    pass
+class DocumentCreate(BaseModel):
+    user_id: UUID
+    title: str | None = None
+    mime_type: DocumentMime
 
 class DocumentOut(DocumentBase):
-    id: str
-    status: str
+    id: UUID
+    status: DocumentStatus
     created_at: datetime
     updated_at: datetime
 

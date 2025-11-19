@@ -9,10 +9,10 @@ from app.schemas.user_schema import (
 from app.services.user_service import (
     create_user, 
     get_users,
-    check_user_exists
+    check_user_exists_by_email
 )
-from backend.app.schemas.document_schema import DocumentListOut
-from backend.app.services.document_service import get_documents
+from app.schemas.document_schema import DocumentListOut
+from app.services.document_service import get_documents
 
 router = APIRouter(
     prefix="/users", 
@@ -60,7 +60,7 @@ def create_user_endpoint(
     db: Session = Depends(get_db)
 ):
 
-    if check_user_exists(db, data.email):
+    if check_user_exists_by_email(db, data.email):
         raise HTTPException(status_code=400, detail="Email already exists")
     
     return create_user(db, data)

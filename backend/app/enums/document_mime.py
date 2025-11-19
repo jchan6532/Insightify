@@ -1,6 +1,6 @@
 from enum import Enum
 
-class DocumentMime(Enum):
+class DocumentMime(str, Enum):
     PDF = "application/pdf"
     TEXT = "text/plain"
     MARKDOWN = "text/markdown"

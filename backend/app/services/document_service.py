@@ -1,8 +1,19 @@
-from sqlalchemy.orm import Session
-from app.models.document import Document
-from uuid import UUID
+import os
+from pathlib import Path
+from uuid import uuid4, UUID
 
+from fastapi import UploadFile
+from sqlalchemy.orm import Session
+
+from app.models.document import Document
 from app.schemas.document_schema import DocumentCreate
+from app.enums.document_status import DocumentStatus
+from app.enums.document_source import DocumentSource
+
+
+BACKEND_DIR = Path(__file__).resolve().parents[2]
+STORAGE_DIR = BACKEND_DIR / "storage"
+STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 
@@ -65,8 +76,44 @@ def get_document_by_id(
 
     return document
 
-def create_document(db: Session, data: DocumentCreate) -> Document:
-    pass
+def save_uploaded_file(file: UploadFile, target_path: Path) -> int:
+    """Save the uploaded file to disk and return its size in bytes."""
+    contents = file.file.read()
+    target_path.write_bytes(contents)
+    return len(contents)
+def create_document(
+    db: Session, 
+    data: DocumentCreate,
+    file: UploadFile
+) -> Document:
+    
+    document = Document(
+        user_id=data.user_id,
+        title=data.title,
+        mime_type=data.mime_type,
+        byte_size=None,        # update after saving file
+        storage_uri="",        # fill after saving
+        source=DocumentSource.UPLOAD,
+        status=DocumentStatus.PENDING,
+    )
+    db.add(document)
+    db.commit()
+    db.refresh(document)
+
+    _, ext = os.path.splitext(file.filename)
+    ext = ext.lower() or ""
+
+    filename = f"{document.id}{ext}"
+    path = STORAGE_DIR / filename
+
+    size_bytes = save_uploaded_file(file, path)
+
+    document.storage_uri = f"storage/{filename}"
+    document.byte_size = size_bytes
+    db.commit()
+    db.refresh(document)
+
+    return document
 
 def update_document_title(
     db: Session,
