@@ -15,6 +15,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from app.enums.document_status import DocumentStatus
 from app.enums.document_mime import DocumentMime
+from app.enums.document_source import DocumentSource
 
 class Document(Base):
     __tablename__ = "documents"
@@ -49,6 +50,11 @@ class Document(Base):
     source : Mapped[str] = mapped_column(
         String(24),
         default="upload",
+        nullable=False
+    )
+    source : Mapped[DocumentSource] = mapped_column(
+        Enum(DocumentSource),
+        default=DocumentSource.UPLOAD,
         nullable=False
     )
     status: Mapped[DocumentStatus] = mapped_column(

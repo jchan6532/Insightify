@@ -12,6 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 # Project imports
 from app.core.config import get_settings
 from app.db.base import Base  # Base.metadata must include all models
+import app.models
 
 # Alembic config & logging
 config = context.config

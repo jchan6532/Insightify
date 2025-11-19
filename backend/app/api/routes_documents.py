@@ -1,5 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import UUID
+from fastapi import (
+    APIRouter, Depends, 
+    HTTPException, 
+    status, 
+    Form, 
+    File, 
+    UploadFile
+)
+from uuid import UUID
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schemas.document_schema import (
@@ -14,13 +21,16 @@ from app.services.document_service import (
     update_document_title,
     delete_document
 )
+from app.services.user_service import (
+    check_user_exists
+)
 
 router = APIRouter(
     prefix="/documents", 
     tags=["documents"]
 )
 
-@router.get("/{document_id}", response_model=DocumentOut)
+@router.get("/{document_id}", response_model=DocumentOut, status_code=status.HTTP_200_OK)
 def get_document(
     document_id: UUID,
     user_id: UUID,
@@ -44,12 +54,41 @@ def get_document(
         )
     return document
 
+# METADATA VERSION
+# @router.post("/", response_model=DocumentOut, status_code=status.HTTP_201_CREATED)
+# def create_document_endpoint(
+#     data: DocumentCreate, 
+#     db: Session = Depends(get_db)
+# ):
+#     document = create_document(db, data)
+#     return document
 @router.post("/", response_model=DocumentOut, status_code=status.HTTP_201_CREATED)
 def create_document_endpoint(
-    data: DocumentCreate, 
+    user_id: UUID = Form(...),
+    title: str | None = Form(...),
+    mime_type: str = Form(...),
+    file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-    document = create_document(db, data)
+    exists = check_user_exists(db=db, user_id=user_id)
+    if not exists:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid user_id: user does not exist",
+        )
+    
+    data = DocumentCreate(
+        user_id=user_id,
+        title=title,
+        mime_type=mime_type
+    )
+    
+    document = create_document(
+        db=db,
+        data=data,
+        file=file
+    )
+    
     return document
 
 @router.put("/{document_id}/title", response_model=DocumentOut, status_code=status.HTTP_200_OK)

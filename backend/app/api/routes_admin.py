@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from backend.app.schemas.admin_schema import AdminResetRequest
+from app.schemas.admin_schema import AdminResetRequest
 from sqlalchemy.orm import Session
 import os
 
