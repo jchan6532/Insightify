@@ -5,6 +5,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import BookOutlinedIcon from '@mui/icons-material/BookOutlined';
 import Person2Outlined from '@mui/icons-material/Person2Outlined';
+import MessageOutlined from '@mui/icons-material/MessageOutlined';
 import { useAuthHook } from '@/hooks/useAuthHook';
 import Item from '@/components/layout/SideBar/item';
 import { useLocation } from 'react-router-dom';
@@ -13,6 +14,7 @@ const SideBarItemTitles: Record<string, string> = {
   '/': 'Dashboard',
   '/documents': 'Documents',
   '/profile': 'Profile',
+  '/chats': 'Chats',
 };
 
 const Sidebar = () => {
@@ -112,6 +114,12 @@ const Sidebar = () => {
               to='/profile'
               icon={<Person2Outlined />}
               active={currentPath === '/profile'}
+            />
+            <Item
+              title={SideBarItemTitles['/chats']}
+              to='/chats'
+              icon={<MessageOutlined />}
+              active={currentPath === '/chats'}
             />
 
             <Typography variant='h6' sx={{ m: '15px 0 5px 20px' }}>
