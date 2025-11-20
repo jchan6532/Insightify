@@ -11,6 +11,8 @@ import { useContext } from 'react';
 import { ColorModeContext } from '@/contexts';
 import { useAuthHook } from '@/hooks/useAuthHook';
 
+const ICON_SIZE = 25;
+
 const Topbar = () => {
   const { toggleColorMode } = useContext(ColorModeContext);
   const { logout } = useAuthHook();
@@ -25,27 +27,39 @@ const Topbar = () => {
   return (
     <Box display='flex' justifyContent='space-between' p={2}>
       <Box display='flex' borderRadius='3px'>
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder='Search' />
-        <IconButton type='button' sx={{ p: 1 }}>
-          <SearchIcon />
+        <InputBase
+          sx={{
+            ml: 2,
+            mr: 2,
+            flex: 1,
+            fontSize: 22,
+            width: 300,
+            backgroundColor: 'rgba(255,255,255,0.85)',
+            borderRadius: 5,
+            pl: 2,
+          }}
+          placeholder='Search'
+        />
+        <IconButton type='button' sx={{ p: 1, ml: 2, mr: 2 }}>
+          <SearchIcon sx={{ fontSize: ICON_SIZE }} />
         </IconButton>
       </Box>
 
       <Box display='flex'>
         <IconButton onClick={handleToggleColorMode}>
-          <DarkModeOutlinedIcon />
+          <DarkModeOutlinedIcon sx={{ fontSize: ICON_SIZE }} />
         </IconButton>
         <IconButton>
-          <NotificationsOutlinedIcon />
+          <NotificationsOutlinedIcon sx={{ fontSize: ICON_SIZE }} />
         </IconButton>
         <IconButton>
-          <SettingsOutlinedIcon />
+          <SettingsOutlinedIcon sx={{ fontSize: ICON_SIZE }} />
         </IconButton>
         <IconButton>
-          <PersonOutlinedIcon />
+          <PersonOutlinedIcon sx={{ fontSize: ICON_SIZE }} />
         </IconButton>
         <IconButton onClick={handleLogout}>
-          <LogoutIcon />
+          <LogoutIcon sx={{ fontSize: ICON_SIZE }} />
         </IconButton>
       </Box>
     </Box>
