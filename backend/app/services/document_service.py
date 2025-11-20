@@ -91,8 +91,8 @@ def create_document(
         user_id=data.user_id,
         title=data.title,
         mime_type=data.mime_type,
-        byte_size=None,        # update after saving file
-        storage_uri="",        # fill after saving
+        byte_size=None,
+        storage_uri="",
         source=DocumentSource.UPLOAD,
         status=DocumentStatus.PENDING,
     )

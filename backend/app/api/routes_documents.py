@@ -24,6 +24,8 @@ from app.services.document_service import (
 from app.services.user_service import (
     check_user_exists
 )
+from app.services.doc_chunk_service import process_document_chunks
+from app.enums.document_mime import DocumentMime
 
 router = APIRouter(
     prefix="/documents", 
@@ -80,7 +82,7 @@ def create_document_endpoint(
     data = DocumentCreate(
         user_id=user_id,
         title=title,
-        mime_type=mime_type
+        mime_type=DocumentMime(mime_type)
     )
     
     document = create_document(
@@ -88,6 +90,8 @@ def create_document_endpoint(
         data=data,
         file=file
     )
+
+    process_document_chunks(db=db, document=document)
     
     return document
 

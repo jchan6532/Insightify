@@ -33,3 +33,6 @@ venv/
 # SRS
 *.docx
 *.pdf
+
+# Test
+/test

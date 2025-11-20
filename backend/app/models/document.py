@@ -36,8 +36,8 @@ class Document(Base):
         nullable=True
     )
     mime_type: Mapped[DocumentMime] = mapped_column(
-        Enum(DocumentMime),
-        nullable=False
+        String(255),
+        nullable=False,
     )
     byte_size: Mapped[int | None] = mapped_column(
         BigInteger,
@@ -47,18 +47,23 @@ class Document(Base):
         String(1024),
         nullable=False
     )
-    source : Mapped[str] = mapped_column(
-        String(24),
-        default="upload",
-        nullable=False
-    )
     source : Mapped[DocumentSource] = mapped_column(
-        Enum(DocumentSource),
+        Enum(
+            DocumentSource, 
+            name="documentsource", 
+            values_callable=lambda e: [item.value for item in e], 
+            create_type=False
+        ),
         default=DocumentSource.UPLOAD,
         nullable=False
     )
     status: Mapped[DocumentStatus] = mapped_column(
-        Enum(DocumentStatus),
+        Enum(
+            DocumentStatus,
+            name="documentstatus",
+            values_callable=lambda e: [item.value for item in e],
+            create_type=False
+        ),
         default=DocumentStatus.PENDING,
         nullable=False
     )
