@@ -10,7 +10,6 @@ from sqlalchemy import (
     func,
     Float,
 )
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from pgvector.sqlalchemy import Vector
 

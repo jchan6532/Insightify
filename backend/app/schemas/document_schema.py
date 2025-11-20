@@ -8,7 +8,7 @@ from app.enums.document_mime import DocumentMime
 class DocumentBase(BaseModel):
     user_id: UUID
     title: str | None
-    mime_type: DocumentMime
+    mime_type: str
     byte_size: int | None = None
     storage_uri: str
     source: str
@@ -17,7 +17,7 @@ class DocumentBase(BaseModel):
 class DocumentCreate(BaseModel):
     user_id: UUID
     title: str | None = None
-    mime_type: DocumentMime
+    mime_type: str
 
 class DocumentOut(DocumentBase):
     id: UUID
