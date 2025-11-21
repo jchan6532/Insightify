@@ -12,6 +12,8 @@ import {
   signInWithPopup,
   signInWithRedirect,
   signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   type User as FirebaseUser,
 } from 'firebase/auth';
 
@@ -27,7 +29,8 @@ type User = {
 export type AuthContextValue = {
   user: User;
   loading: boolean;
-  login: (email?: string) => Promise<void>;
+  signUpWithEmailPassword: (email: string, password: string) => Promise<void>;
+  loginWithEmailPassword: (email: string, password: string) => Promise<void>;
   loginWithGooglePopup: () => Promise<void>;
   loginWithGoogleRedirect: () => Promise<void>;
   logout: () => Promise<void>;
@@ -42,13 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(null);
   const [loading, setLoading] = useState(false);
 
-  // mock rehydrate (swap with Firebase/JWT later)
   useEffect(() => {
-    const raw = localStorage.getItem('demo_user');
-    if (raw) setUser(JSON.parse(raw) as User);
-  }, []);
-  useEffect(() => {
-    // subscribe to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(
       auth,
       (firebaseUser: FirebaseUser | null) => {
@@ -72,17 +69,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribe();
   }, []);
 
-  const login = async (email?: string) => {
+  const signUpWithEmailPassword = async (email: string, password: string) => {
     setLoading(true);
 
-    const user = {
-      id: 'demo-user-1',
-      email: email ?? 'demo@local',
-      displayName: 'Demo User',
-    };
-    localStorage.setItem('demo_user', JSON.stringify(user));
-    setUser(user);
-    setLoading(false);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      console.error('Google sign-in failed', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginWithEmailPassword = async (email: string, password: string) => {
+    setLoading(true);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      console.error('Google sign-in failed', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loginWithGooglePopup = async () => {
@@ -113,10 +121,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await signOut(auth);
     } catch (err) {
       console.error('Sign out failed', err);
+    } finally {
+      setUser(null);
+      setLoading(false);
     }
-    localStorage.removeItem('demo_user');
-    setUser(null);
-    setLoading(false);
   };
 
   const getIdToken = async () => {
@@ -129,7 +137,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       loading,
-      login,
+      signUpWithEmailPassword,
+      loginWithEmailPassword,
       loginWithGooglePopup,
       loginWithGoogleRedirect,
       logout,
@@ -141,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth(): AuthContextValue {
+export function useAuthContext(): AuthContextValue {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>');
   return ctx;
