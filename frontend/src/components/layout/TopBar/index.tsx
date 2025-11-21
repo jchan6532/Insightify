@@ -9,13 +9,13 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useContext } from 'react';
 
 import { ColorModeContext } from '@/contexts';
-import { useAuthHook } from '@/hooks/useAuthHook';
+import { useAuth } from '@/hooks/useAuth';
 
 const ICON_SIZE = 25;
 
 const Topbar = () => {
   const { toggleColorMode } = useContext(ColorModeContext);
-  const { logout } = useAuthHook();
+  const { logout } = useAuth();
   const handleLogout = async () => {
     await logout();
   };

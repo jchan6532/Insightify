@@ -1,16 +1,30 @@
 import { Button, Box, Typography, Paper, TextField } from '@mui/material';
-import { useAuthHook } from '@/hooks/useAuthHook';
+import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import goolgeLogo from '@/assets/google-logo.svg';
 import { useState } from 'react';
 
 export function Login() {
-  const { loginWithGooglePopup } = useAuthHook();
+  const {
+    signUpWithEmailPassword,
+    loginWithGooglePopup,
+    loginWithEmailPassword,
+  } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
-  const handleLogin = () => console.log(email, password);
+  const handleSignupWithEmailPassword = async () => {
+    if (!email || !password) return;
+    await signUpWithEmailPassword(email, password);
+    navigate('/');
+  };
+
+  const handleLoginWithEmailPassword = async () => {
+    if (!email || !password) return;
+    await loginWithEmailPassword(email, password);
+    navigate('/');
+  };
 
   const handleGoogleLogin = async () => {
     await loginWithGooglePopup();
@@ -70,9 +84,19 @@ export function Login() {
             size='large'
             fullWidth
             sx={{ mt: 1 }}
-            onClick={handleLogin}
+            onClick={handleLoginWithEmailPassword}
           >
             Sign In
+          </Button>
+
+          <Button
+            variant='text'
+            size='large'
+            fullWidth
+            sx={{ mt: 1 }}
+            onClick={handleSignupWithEmailPassword}
+          >
+            Create Account
           </Button>
         </Paper>
         <br />

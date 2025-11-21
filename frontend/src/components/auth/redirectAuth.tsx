@@ -1,11 +1,11 @@
 import { Navigate } from 'react-router-dom';
 import { type ReactNode } from 'react';
-import { useAuthHook } from '@/hooks/useAuthHook';
+import { useAuth } from '@/hooks/useAuth';
 
 type Props = { children: ReactNode };
 
 export function RedirectAuth({ children }: Props) {
-  const { isLoggedIn, loading } = useAuthHook();
+  const { isLoggedIn, loading } = useAuth();
 
   if (loading) return <div>Loading...</div>;
 

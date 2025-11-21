@@ -6,7 +6,7 @@ import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import BookOutlinedIcon from '@mui/icons-material/BookOutlined';
 import Person2Outlined from '@mui/icons-material/Person2Outlined';
 import MessageOutlined from '@mui/icons-material/MessageOutlined';
-import { useAuthHook } from '@/hooks/useAuthHook';
+import { useAuth } from '@/hooks/useAuth';
 import Item from '@/components/layout/SideBar/item';
 import { useLocation } from 'react-router-dom';
 
@@ -18,7 +18,7 @@ const SideBarItemTitles: Record<string, string> = {
 };
 
 const Sidebar = () => {
-  const { user } = useAuthHook();
+  const { user } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const location = useLocation();
   const currentPath = location.pathname;
