@@ -1,11 +1,4 @@
-import {
-  Button,
-  Box,
-  Typography,
-  useTheme,
-  Paper,
-  TextField,
-} from '@mui/material';
+import { Button, Box, Typography, Paper, TextField } from '@mui/material';
 import { useAuthHook } from '@/hooks/useAuthHook';
 import { useNavigate } from 'react-router-dom';
 import goolgeLogo from '@/assets/google-logo.svg';
