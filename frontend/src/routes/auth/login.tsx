@@ -1,10 +1,23 @@
-import { Button } from '@mui/material';
+import {
+  Button,
+  Box,
+  Typography,
+  useTheme,
+  Paper,
+  TextField,
+} from '@mui/material';
 import { useAuthHook } from '@/hooks/useAuthHook';
 import { useNavigate } from 'react-router-dom';
+import goolgeLogo from '@/assets/google-logo.svg';
+import { useState } from 'react';
 
 export function Login() {
   const { loginWithGooglePopup } = useAuthHook();
   const navigate = useNavigate();
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
+
+  const handleLogin = () => console.log(email, password);
 
   const handleGoogleLogin = async () => {
     await loginWithGooglePopup();
@@ -13,10 +26,74 @@ export function Login() {
 
   return (
     <>
-      <h1>Login</h1>
-      <Button variant='contained' onClick={handleGoogleLogin}>
-        sign in with google
-      </Button>
+      <Box
+        display='flex'
+        flexDirection='column'
+        justifyContent='center'
+        alignItems='center'
+        padding={10}
+      >
+        <Typography variant='h1' textAlign='center' fontWeight={600} pt={20}>
+          Login
+        </Typography>
+        <br />
+        <br />
+        <br />
+
+        <Paper
+          elevation={5}
+          sx={{
+            p: 4,
+            width: 360,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            borderRadius: 2,
+          }}
+        >
+          {/* Email */}
+          <TextField
+            label='Email'
+            type='email'
+            fullWidth
+            variant='outlined'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          {/* Password */}
+          <TextField
+            label='Password'
+            type='password'
+            fullWidth
+            variant='outlined'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          {/* Submit button */}
+          <Button
+            variant='contained'
+            size='large'
+            fullWidth
+            sx={{ mt: 1 }}
+            onClick={handleLogin}
+          >
+            Sign In
+          </Button>
+        </Paper>
+        <br />
+        <br />
+        <Paper elevation={10} sx={{ borderRadius: 5 }}>
+          <Button
+            variant='contained'
+            className='button-style'
+            startIcon={<img height='48' alt='Google logo' src={goolgeLogo} />}
+            onClick={handleGoogleLogin}
+            sx={{ height: 80, width: 80, pl: 3.5, borderRadius: 5 }}
+          />{' '}
+        </Paper>
+      </Box>
     </>
   );
 }
