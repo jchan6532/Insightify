@@ -23,18 +23,18 @@ class User(Base):
         index=True,
         nullable=False
     )
-    hashed_password: Mapped[str] = mapped_column(
-        String(255),
-        nullable=True
-    )
     name : Mapped[str | None] = mapped_column(
         String(120),
         nullable=True
     )
-    
+    provider_id: Mapped[str | None] = mapped_column(
+        String(255),
+        unique=True,
+        nullable=True,
+    )
     auth_provider: Mapped[str] = mapped_column(
         String(32), 
-        default="password",
+        default="firebase",
         nullable=False
     )
     role: Mapped[Roles] = mapped_column(
