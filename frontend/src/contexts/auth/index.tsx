@@ -18,6 +18,8 @@ import {
 } from 'firebase/auth';
 
 import { auth, googleProvider } from '@/config/firebase';
+import { setAuthToken } from '@/apis';
+import { authApi } from '@/apis/auth';
 
 type User = {
   id: string;
@@ -26,8 +28,16 @@ type User = {
   photoURL?: string;
 } | null;
 
+type AppUser = {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+} | null;
+
 export type AuthContextValue = {
   user: User;
+  appUser: AppUser;
   loading: boolean;
   signUpWithEmailPassword: (email: string, password: string) => Promise<void>;
   loginWithEmailPassword: (email: string, password: string) => Promise<void>;
@@ -43,15 +53,16 @@ export const AuthContext = createContext<AuthContextValue | undefined>(
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(null);
+  const [appUser, setAppUser] = useState<AppUser>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(
       auth,
-      (firebaseUser: FirebaseUser | null) => {
+      async (firebaseUser: FirebaseUser | null) => {
         if (!firebaseUser) {
           setUser(null);
-          setLoading(false);
+          setAuthToken(null);
           return;
         }
 
@@ -62,7 +73,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           photoURL: firebaseUser.photoURL ?? undefined,
         });
 
-        setLoading(false);
+        const token = await firebaseUser.getIdToken();
+        setAuthToken(token);
+
+        try {
+          const res = await authApi.post('/sync');
+          setAppUser(res.data);
+        } catch (err) {
+          console.error('Failed to sync user with backend', err);
+        }
       }
     );
 
@@ -75,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
     } catch (err) {
-      console.error('Google sign-in failed', err);
+      console.error('Email sign-up failed', err);
     } finally {
       setLoading(false);
     }
@@ -123,6 +142,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Sign out failed', err);
     } finally {
       setUser(null);
+      setAppUser(null);
+      setAuthToken(null);
       setLoading(false);
     }
   };
@@ -136,6 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       user,
+      appUser,
       loading,
       signUpWithEmailPassword,
       loginWithEmailPassword,
@@ -144,7 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout,
       getIdToken,
     }),
-    [user, loading]
+    [user, appUser, loading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

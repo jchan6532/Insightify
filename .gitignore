@@ -36,3 +36,6 @@ venv/
 
 # Test
 /test
+
+# Firebase
+backend/app/firebase/service_account.json
