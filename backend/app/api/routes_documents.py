@@ -26,6 +26,8 @@ from app.services.user_service import (
 )
 from app.services.doc_chunk_service import process_document_chunks
 from app.enums.document_mime import DocumentMime
+from app.dependencies.auth import get_current_user
+from app.models.user import User
 
 router = APIRouter(
     prefix="/documents", 
@@ -35,13 +37,13 @@ router = APIRouter(
 @router.get("/{document_id}", response_model=DocumentOut, status_code=status.HTTP_200_OK)
 def get_document(
     document_id: UUID,
-    user_id: UUID,
+    current_user: User = Depends(get_current_user),
     db : Session = Depends(get_db)
 ):
     if not check_document_belongs_to_user(
         db, 
         document_id, 
-        user_id
+        current_user.id
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -66,13 +68,13 @@ def get_document(
 #     return document
 @router.post("/", response_model=DocumentOut, status_code=status.HTTP_201_CREATED)
 def create_document_endpoint(
-    user_id: UUID = Form(...),
     title: str | None = Form(...),
     mime_type: str = Form(...),
     file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    exists = check_user_exists(db=db, user_id=user_id)
+    exists = check_user_exists(db=db, user_id=current_user.id)
     if not exists:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -80,7 +82,7 @@ def create_document_endpoint(
         )
     
     data = DocumentCreate(
-        user_id=user_id,
+        user_id=current_user.id,
         title=title,
         mime_type=DocumentMime(mime_type)
     )
@@ -99,12 +101,13 @@ def create_document_endpoint(
 def update_document_endpoint(
     document_id: UUID,
     data: DocumentTitleUpdate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     if not check_document_belongs_to_user(
         db, 
         document_id, 
-        data.user_id
+        current_user.id
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -123,13 +126,13 @@ def update_document_endpoint(
 @router.delete("/{document_id}", status_code=status.HTTP_200_OK)
 def delete_document_endpoint(
     document_id: UUID,
-    user_id: UUID,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     if not check_document_belongs_to_user(
         db, 
         document_id, 
-        user_id
+        current_user.id
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

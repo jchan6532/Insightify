@@ -3,7 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schemas.user_schema import (
-    UserCreate, UserOut,
+    UserCreate, 
+    UserOut,
     UserListOut
 )
 from app.services.user_service import (
@@ -13,6 +14,8 @@ from app.services.user_service import (
 )
 from app.schemas.document_schema import DocumentListOut
 from app.services.document_service import get_documents
+from app.dependencies.auth import get_current_user
+from app.models.user import User
 
 router = APIRouter(
     prefix="/users", 
@@ -35,7 +38,7 @@ def list_users(
 
 @router.get("/{user_id}/documents", response_model=DocumentListOut, status_code=status.HTTP_200_OK)
 def list_documents_of_user(
-    user_id: UUID,
+    current_user: User = Depends(get_current_user),
     status_filter: str | None = None,
     mime_type_filter: str | None = None,   
     skip: int = 0, 
@@ -44,7 +47,7 @@ def list_documents_of_user(
 ):
     documents = get_documents(
         db, 
-        user_id=user_id,
+        user_id=current_user.id,
         skip=skip, 
         limit=limit, 
         status=status_filter, 

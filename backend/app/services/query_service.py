@@ -1,15 +1,19 @@
 from sqlalchemy.orm import Session
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import select
-from uuid import UUID
 
 from app.schemas.query_schema import QueryRequest, QueryResponse, RetrievedChunk
 from app.models.doc_chunk import DocChunk
+from app.models.user import User
 
 def fake_embed_query(text: str) -> list[float]:
     return [0.0] * 1536
 
-def answer_query(db: Session, data: QueryRequest) -> QueryResponse:
+def answer_query(
+    db: Session, 
+    data: QueryRequest, 
+    user: User
+) -> QueryResponse:
     query_vec = fake_embed_query(data.question)
 
     stmt = (
