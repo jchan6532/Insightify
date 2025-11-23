@@ -33,6 +33,5 @@ class DocumentListOut(BaseModel):
     total: int
 
 class DocumentTitleUpdate(BaseModel):
-    user_id: UUID
     title: str
 
