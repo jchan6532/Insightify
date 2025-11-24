@@ -12,7 +12,9 @@ from app.db.session import get_db
 from app.schemas.document_schema import (
     DocumentCreate, 
     DocumentOut,
-    DocumentTitleUpdate
+    DocumentTitleUpdate,
+    PresignUploadRequest,
+    PresignUploadResponse
 )
 from app.services.document_service import (
     create_document,
@@ -28,6 +30,7 @@ from app.services.doc_chunk_service import process_document_chunks
 from app.enums.document_mime import DocumentMime
 from app.dependencies.auth import get_current_user
 from app.models.user import User
+from app.services.storage_service import generate_object_key, create_presigned_url
 
 router = APIRouter(
     prefix="/documents", 
@@ -58,39 +61,16 @@ def get_document(
         )
     return document
 
-# METADATA VERSION
-# @router.post("/", response_model=DocumentOut, status_code=status.HTTP_201_CREATED)
-# def create_document_endpoint(
-#     data: DocumentCreate, 
-#     db: Session = Depends(get_db)
-# ):
-#     document = create_document(db, data)
-#     return document
 @router.post("/", response_model=DocumentOut, status_code=status.HTTP_201_CREATED)
 def create_document_endpoint(
-    title: str | None = Form(...),
-    mime_type: str = Form(...),
-    file: UploadFile = File(...),
+    data: DocumentCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    exists = check_user_exists(db=db, user_id=current_user.id)
-    if not exists:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid user_id: user does not exist",
-        )
-    
-    data = DocumentCreate(
-        user_id=current_user.id,
-        title=title,
-        mime_type=DocumentMime(mime_type)
-    )
     
     document = create_document(
         db=db,
-        data=data,
-        file=file
+        data=data
     )
 
     process_document_chunks(db=db, document=document)
@@ -147,3 +127,13 @@ def delete_document_endpoint(
         )
     
     return {"detail": "Document deleted successfully"}
+
+@router.post("/presign-upload", response_model=PresignUploadResponse)
+def presign_upload(
+    data: PresignUploadRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    key = generate_object_key(str(current_user.id), data.filename)
+    url = create_presigned_url(key, data.mime_type)
+    return PresignUploadResponse(url=url, key=key)
