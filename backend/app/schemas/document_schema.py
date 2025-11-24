@@ -15,9 +15,10 @@ class DocumentBase(BaseModel):
     checksum: str | None = None
 
 class DocumentCreate(BaseModel):
-    user_id: UUID
     title: str | None = None
     mime_type: str
+    storage_uri: str
+    byte_size: int | None = None
 
 class DocumentOut(DocumentBase):
     id: UUID
@@ -35,3 +36,13 @@ class DocumentListOut(BaseModel):
 class DocumentTitleUpdate(BaseModel):
     title: str
 
+
+
+
+class PresignUploadRequest(BaseModel):
+    filename: str
+    mime_type: str
+
+class PresignUploadResponse(BaseModel):
+    url: str
+    key: str
