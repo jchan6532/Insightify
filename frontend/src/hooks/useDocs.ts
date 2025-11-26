@@ -1,34 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+
+// API
 import { usersApi } from '@/apis/users';
 
-export type DocumentStatus = 'pending' | 'processing' | 'ready' | 'failed';
-export type DocumentSource = 'upload';
-
-export interface Document {
-  id: string;
-  user_id: string;
-  title: string | null;
-  mime_type: string;
-  byte_size: number | null;
-  storage_uri: string;
-  source: DocumentSource;
-  status: DocumentStatus;
-  checksum: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DocumentList {
-  documents: Document[];
-  total: number;
-}
-
-type UseDocumentOptions = {
-  statusFilter?: string | null;
-  mimeTypeFilter?: string | null;
-  skip?: number;
-  limit?: number;
-};
+// TYPES
+import { type DocumentList } from '@/types/document/DocumentList.interface';
+import { type UseDocumentOptions } from '@/types/document/UseDocumentOptions.type';
 
 async function fetchDocuments(
   options: UseDocumentOptions
@@ -48,8 +25,23 @@ async function fetchDocuments(
 }
 
 export function useDocuments(options: UseDocumentOptions = {}) {
+  const {
+    statusFilter = null,
+    mimeTypeFilter = null,
+    skip = 0,
+    limit = null,
+  } = options;
+
   return useQuery({
-    queryKey: ['documents', options],
+    queryKey: [
+      'documents',
+      {
+        statusFilter,
+        mimeTypeFilter,
+        skip,
+        limit,
+      },
+    ],
     queryFn: () => fetchDocuments(options),
     staleTime: 5 * 60 * 1000,
   });
