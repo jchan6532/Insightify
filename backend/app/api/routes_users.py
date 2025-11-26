@@ -1,4 +1,3 @@
-from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.session import get_db
@@ -36,13 +35,13 @@ def list_users(
 
     return UserListOut(users=users, total=len(users))
 
-@router.get("/{user_id}/documents", response_model=DocumentListOut, status_code=status.HTTP_200_OK)
+@router.get("/documents", response_model=DocumentListOut, status_code=status.HTTP_200_OK)
 def list_documents_of_user(
-    current_user: User = Depends(get_current_user),
     status_filter: str | None = None,
     mime_type_filter: str | None = None,   
     skip: int = 0, 
     limit: int | None = None, 
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     documents = get_documents(
