@@ -21,31 +21,9 @@ import { auth, googleProvider } from '@/config/firebase';
 import { setAuthToken } from '@/apis';
 import { authApi } from '@/apis/auth';
 
-type User = {
-  id: string;
-  email: string;
-  displayName: string;
-  photoURL?: string;
-} | null;
-
-type AppUser = {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-} | null;
-
-export type AuthContextValue = {
-  user: User;
-  appUser: AppUser;
-  loading: boolean;
-  signUpWithEmailPassword: (email: string, password: string) => Promise<void>;
-  loginWithEmailPassword: (email: string, password: string) => Promise<void>;
-  loginWithGooglePopup: () => Promise<void>;
-  loginWithGoogleRedirect: () => Promise<void>;
-  logout: () => Promise<void>;
-  getIdToken: () => Promise<string | null>;
-};
+import { type User } from '@/types/user/User.type';
+import { type AppUser } from '@/types/user/AppUser.type';
+import { type AuthContextValue } from '@/types/contexts/AuthContextvalue.type';
 
 export const AuthContext = createContext<AuthContextValue | undefined>(
   undefined

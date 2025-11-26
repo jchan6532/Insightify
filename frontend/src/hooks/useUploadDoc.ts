@@ -1,23 +1,18 @@
 import axios from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+// API
 import { documentsApi } from '@/apis/documents';
-import { type Document } from './useDocs';
 
-type PresignedData = {
-  url: string;
-  key: string;
-};
-
-type UploadArgs = {
-  file: File;
-  title: string | null;
-};
+// TYPES
+import { type Document } from '@/types/document/Document.type';
+import { type PresignedData } from '@/types/document/PresignedData.type';
+import { type UseUploadArgs } from '@/types/document/UseUploadArgs.type';
 
 const uploadDocumentFn = async ({
   file,
   title,
-}: UploadArgs): Promise<Document> => {
+}: UseUploadArgs): Promise<Document> => {
   const presignRes = await documentsApi.post('/presign-upload', {
     filename: file.name,
     mime_type: file.type,

@@ -1,9 +1,5 @@
-import { useAuthContext, type AuthContextValue } from '@/contexts/auth';
-
-export type AuthHookResult = AuthContextValue & {
-  isLoggedIn: boolean;
-  isLoading: boolean;
-};
+import { useAuthContext } from '@/contexts/auth';
+import { type AuthHookResult } from '@/types/auth/AuthHookResult.type';
 
 export function useAuth(): AuthHookResult {
   const auth = useAuthContext();
