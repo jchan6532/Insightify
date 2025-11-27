@@ -2,10 +2,12 @@ import { Button, Box, Typography, Paper, TextField } from '@mui/material';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import goolgeLogo from '@/assets/google-logo.svg';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function Login() {
   const {
+    isLoggedIn,
+    isLoading,
     signUpWithEmailPassword,
     loginWithGooglePopup,
     loginWithEmailPassword,
@@ -17,19 +19,20 @@ export function Login() {
   const handleSignupWithEmailPassword = async () => {
     if (!email || !password) return;
     await signUpWithEmailPassword(email, password);
-    navigate('/');
   };
 
   const handleLoginWithEmailPassword = async () => {
     if (!email || !password) return;
     await loginWithEmailPassword(email, password);
-    navigate('/');
   };
 
   const handleGoogleLogin = async () => {
     await loginWithGooglePopup();
-    navigate('/');
   };
+
+  useEffect(() => {
+    if (!isLoading && isLoggedIn) navigate('/');
+  }, [isLoading, isLoggedIn]);
 
   return (
     <>

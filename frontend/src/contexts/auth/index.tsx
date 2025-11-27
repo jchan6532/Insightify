@@ -59,6 +59,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setAppUser(res.data);
         } catch (err) {
           console.error('Failed to sync user with backend', err);
+          setUser(null);
+          setAppUser(null);
         }
       }
     );

@@ -5,14 +5,15 @@ import os
 
 from app.services.admin_service import reset_database
 from app.db.session import get_db
+from app.core.config import get_settings
 
+settings = get_settings()
+ADMIN_RESET_PASSWORD = settings.ADMIN_RESET_PASSWORD
 
 router = APIRouter(
     prefix="/admin",
     tags=["admin"]
 )
-
-ADMIN_RESET_PASSWORD = os.getenv("ADMIN_RESET_PASSWORD")
 
 @router.post("/reset-db")
 def reset_db_endpoint(
