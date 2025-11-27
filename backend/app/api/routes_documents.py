@@ -1,10 +1,7 @@
 from fastapi import (
     APIRouter, Depends, 
     HTTPException, 
-    status, 
-    Form, 
-    File, 
-    UploadFile
+    status
 )
 from uuid import UUID
 from sqlalchemy.orm import Session
@@ -23,11 +20,7 @@ from app.services.document_service import (
     update_document_title,
     delete_document
 )
-from app.services.user_service import (
-    check_user_exists
-)
 from app.services.doc_chunk_service import process_document_chunks
-from app.enums.document_mime import DocumentMime
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 from app.services.storage_service import generate_object_key, create_presigned_url

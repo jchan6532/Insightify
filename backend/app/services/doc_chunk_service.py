@@ -1,14 +1,16 @@
+import os
 from sqlalchemy.orm import Session
+
 from app.models.document import Document
 from app.models.doc_chunk import DocChunk
 from app.services.embedding_service import embed_chunks
 from app.core.storage import s3, BUCKET_NAME
 from app.enums.document_mime import DocumentMime
-from app.enums.document_status import DocumentStatus
 from app.services.text_extraction import extract_from_pdf, extract_from_word
-import os
+from app.core.config import get_settings
 
-CHUNK_SIZE = int(os.getenv("DOC_CHUNK_SIZE", 800))
+settings = get_settings()
+CHUNK_SIZE = settings.DOC_CHUNK_SIZE
 
 def load_document_text(document: Document) -> str:
     obj = s3.get_object(Bucket=BUCKET_NAME, Key=document.storage_uri)

@@ -1,4 +1,3 @@
-# app/routers/auth.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -19,7 +18,8 @@ def sync_user(
 
     try:
         decoded = fb_auth.verify_id_token(token)
-    except Exception:
+    except Exception as e:
+        print("Firebase verify_id_token error:", repr(e))
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid Firebase ID token",
