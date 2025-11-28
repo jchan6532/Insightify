@@ -15,12 +15,12 @@ from app.schemas.document_schema import (
 )
 from app.services.document_service import (
     create_document,
+    process_document,
     check_document_belongs_to_user,
     get_document_by_id,
     update_document_title,
     delete_document
 )
-from app.services.doc_chunk_service import process_document_chunks
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 from app.services.storage_service import generate_object_key, create_presigned_url
@@ -60,14 +60,17 @@ def create_document_endpoint(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    
     document = create_document(
         db=db,
-        data=data
+        data=data,
+        user=current_user,
     )
 
-    process_document_chunks(db=db, document=document)
-    
+    document = process_document(
+        db=db, 
+        document=document
+    )
+
     return document
 
 @router.put("/{document_id}/title", response_model=DocumentOut, status_code=status.HTTP_200_OK)

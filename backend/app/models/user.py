@@ -59,4 +59,10 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+
+    queries: Mapped[List["Query"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
     
