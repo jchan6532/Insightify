@@ -1,0 +1,24 @@
+from openai import OpenAI
+from app.models.doc_chunk import DocChunk
+
+llm_client = OpenAI()
+
+def build_answer(question: str, context: list[DocChunk]) -> str:
+    context = "\n\n".join(f"- {c.text}" for c in context)
+
+    prompt = f"""You are a helpful assistant.
+
+Use ONLY the following context to answer the question.
+If the context is not enough, say you don't know.
+
+Context:
+{context}
+
+Question: {question}
+Answer:"""
+
+    resp = llm_client.chat.completions.create(
+        model="gpt-4.1-mini",
+        messages=[{"role": "user", "content": prompt}],
+    )
+    return resp.choices[0].message.content or ""

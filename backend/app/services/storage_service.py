@@ -22,5 +22,9 @@ def create_presigned_url(
         ExpiresIn=expires_in,
     )
 
-def delete_file(key: str) -> None:
+def get_object(key: str) -> any:
+    obj = s3.get_object(Bucket=BUCKET_NAME, Key=key)
+    return obj
+
+def delete_object(key: str) -> None:
     s3.delete_object(Bucket=BUCKET_NAME, Key=key)

@@ -1,19 +1,16 @@
 import os
 from pathlib import Path
 from uuid import uuid4, UUID
-
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.models.document import Document
+from app.models.user import User
 from app.schemas.document_schema import DocumentCreate
 from app.enums.document_status import DocumentStatus
 from app.enums.document_source import DocumentSource
-
-
-BACKEND_DIR = Path(__file__).resolve().parents[2]
-STORAGE_DIR = BACKEND_DIR / "storage"
-STORAGE_DIR.mkdir(parents=True, exist_ok=True)
-
+from app.services.doc_chunk_service import process_document_chunks
+from app.services.storage_service import delete_object
 
 
 def get_documents(
@@ -76,12 +73,12 @@ def get_document_by_id(
     return document
 
 def create_document(
-    db: Session, 
-    data: DocumentCreate
+    db: Session,
+    data: DocumentCreate,
+    user: User,
 ) -> Document:
-    
     document = Document(
-        user_id=data.user_id,
+        user_id=user.id,
         title=data.title,
         mime_type=data.mime_type,
         byte_size=data.byte_size,
@@ -92,8 +89,32 @@ def create_document(
     db.add(document)
     db.commit()
     db.refresh(document)
-
     return document
+
+def process_document(db: Session, document: Document) -> Document:
+    try:
+        process_document_chunks(db=db, document=document)
+
+        document.status = DocumentStatus.READY
+        db.commit()
+        db.refresh(document)
+        return document
+
+    except HTTPException as exc:
+        db.rollback()
+        document.status = DocumentStatus.FAILED
+        db.commit()
+        raise exc
+
+    except Exception:
+        db.rollback()
+        document.status = DocumentStatus.FAILED
+        db.commit()
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to process document. Please try again later.",
+        )
+
 
 def update_document_title(
     db: Session,
