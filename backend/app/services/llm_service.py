@@ -7,7 +7,7 @@ settings = get_settings()
 llm_client = OpenAI(api_key=settings.OPEN_AI_API_KEY)
 
 def build_answer(question: str, context: list[DocChunk]) -> str:
-    context = "\n\n".join(f"- {c.text}" for c in context)
+    ctx_text = "\n\n".join(f"- {c.text}" for c in context)
 
     prompt = f"""You are a helpful assistant.
 
@@ -15,7 +15,7 @@ Use ONLY the following context to answer the question.
 If the context is not enough, say you don't know.
 
 Context:
-{context}
+{ctx_text}
 
 Question: {question}
 Answer:"""
