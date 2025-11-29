@@ -1,6 +1,9 @@
 from openai import OpenAI
 
-client = OpenAI()
+from app.core.config import get_settings
+
+settings = get_settings()
+client = OpenAI(api_key=settings.OPEN_AI_API_KEY)
 
 def embed_query(text: str) -> list[float]:
     resp = client.embeddings.create(
