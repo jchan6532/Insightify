@@ -9,6 +9,8 @@ import { type Document } from '@/types/document/Document.type';
 import { type PresignedData } from '@/types/document/PresignedData.type';
 import { type UseUploadArgs } from '@/types/document/UseUploadArgs.type';
 
+import { useNotification } from '@/contexts/notification';
+
 const uploadDocumentFn = async ({
   file,
   title,
@@ -20,11 +22,17 @@ const uploadDocumentFn = async ({
 
   const { url, key } = presignRes.data as PresignedData;
 
-  await axios.put(url, file, {
-    headers: {
-      'Content-Type': file.type,
-    },
-  });
+  try {
+    await axios.put(url, file, {
+      headers: {
+        'Content-Type': file.type,
+      },
+    });
+  } catch (error) {
+    const e = error as Error;
+    e.name = 'S3UploadError';
+    throw e;
+  }
 
   const createDocRes = await documentsApi.post('/', {
     title,
@@ -38,6 +46,7 @@ const uploadDocumentFn = async ({
 
 export function useUploadDocument() {
   const queryClient = useQueryClient();
+  const { notify } = useNotification();
 
   return useMutation({
     mutationFn: uploadDocumentFn,
@@ -45,6 +54,22 @@ export function useUploadDocument() {
       queryClient.invalidateQueries({
         queryKey: ['documents'],
       });
+      notify({
+        message: 'Document uploaded successfully',
+        severity: 'success',
+      });
+    },
+    onError: (error: unknown) => {
+      let message = 'Failed to upload document, Please try again';
+
+      if (error instanceof Error) {
+        if (error.name === 'S3UploadError') {
+          message =
+            'Failed to upload file to storage, Check your network and try again';
+        }
+      }
+
+      notify({ message, severity: 'error' });
     },
   });
 }

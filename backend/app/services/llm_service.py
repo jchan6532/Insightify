@@ -1,7 +1,10 @@
 from openai import OpenAI
-from app.models.doc_chunk import DocChunk
 
-llm_client = OpenAI()
+from app.models.doc_chunk import DocChunk
+from app.core.config import get_settings
+
+settings = get_settings()
+llm_client = OpenAI(api_key=settings.OPEN_AI_API_KEY)
 
 def build_answer(question: str, context: list[DocChunk]) -> str:
     context = "\n\n".join(f"- {c.text}" for c in context)
