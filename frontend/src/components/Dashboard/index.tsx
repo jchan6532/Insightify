@@ -1,6 +1,7 @@
 import { Box, Toolbar, Typography, useTheme } from '@mui/material';
 import Header from '../Header';
 import { tokens } from '@/contexts/theme/theme';
+import QueryBox from '../QueryBox';
 
 const BORDER_RADIUS = 8;
 
@@ -28,25 +29,22 @@ export default function Dashboard() {
         {/* ROW 1 */}
         <Box
           gridColumn='span 12'
-          gridRow='span 5'
+          gridRow='span 4'
           bgcolor={colors.primary[400]}
           borderRadius={BORDER_RADIUS}
         >
-          <Box
-            mt='25px'
-            p='0 30px'
-            display='flex '
-            justifyContent='space-between'
-            alignItems='center'
-          >
-            <Box>
-              <Typography
-                variant='h3'
-                fontWeight='bold'
-                color={colors.greenAccent[500]}
-              >
-                What's On Your Mind?
-              </Typography>
+          <Box mt='25px' p='0 30px'>
+            <Typography
+              variant='h3'
+              fontWeight='bold'
+              color={colors.greenAccent[500]}
+              textAlign='left'
+            >
+              What's On Your Mind?
+            </Typography>
+
+            <Box display='flex' justifyContent='center' mt={8}>
+              <QueryBox />
             </Box>
           </Box>
           <Box height='250px' overflow={'auto'}></Box>
