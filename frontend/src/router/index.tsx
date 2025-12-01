@@ -8,6 +8,8 @@ import Profile from '@/routes/profile';
 import Documents from '@/routes/documents';
 import { Protected } from '@/components/auth/protected';
 import { RedirectAuth } from '@/components/auth/redirectAuth';
+import Queries from '@/routes/queries';
+import QueryDetail from '@/routes/queries/detail';
 
 export const Router = createBrowserRouter([
   {
@@ -35,6 +37,22 @@ export const Router = createBrowserRouter([
         element: (
           <Protected>
             <Documents />
+          </Protected>
+        ),
+      },
+      {
+        path: 'queries',
+        element: (
+          <Protected>
+            <Queries />
+          </Protected>
+        ),
+      },
+      {
+        path: 'queries/:queryId',
+        element: (
+          <Protected>
+            <QueryDetail />
           </Protected>
         ),
       },
