@@ -61,6 +61,7 @@ def answer_query(
         db.refresh(q)
 
         return QueryResponse(
+            query_id=q.id,
             answer=answer_text,
             chunks=[
                 RetrievedChunk(

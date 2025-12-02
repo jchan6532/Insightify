@@ -7,9 +7,9 @@ import { usersApi } from '@/apis/users';
 import { type DocumentList } from '@/types/document/DocumentList.interface';
 import { type UseDocumentOptions } from '@/types/document/UseDocumentOptions.type';
 
-async function fetchDocuments(
+const fetchDocuments = async (
   options: UseDocumentOptions
-): Promise<DocumentList> {
+): Promise<DocumentList> => {
   const { statusFilter, mimeTypeFilter, skip = 0, limit } = options;
 
   const res = await usersApi.get<DocumentList>(`/documents`, {
@@ -22,7 +22,7 @@ async function fetchDocuments(
   });
 
   return res.data as DocumentList;
-}
+};
 
 export function useDocuments(options: UseDocumentOptions = {}) {
   const {
