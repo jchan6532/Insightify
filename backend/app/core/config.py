@@ -4,6 +4,7 @@ import os
 
 class Settings(BaseModel):
     ENVIRONMENT: str
+    FIREBASE_SERVICE_ACCOUNT_JSON: str
     DB_TYPE: str
     DATABASE_URL: str
 
@@ -40,6 +41,7 @@ class Settings(BaseModel):
             "AWS_S3_BUCKET_NAME",
             "REDIS_URL"
         ]
+        required = []
 
         for field in required:
             value = getattr(self, field)
@@ -47,10 +49,12 @@ class Settings(BaseModel):
                 raise RuntimeError(f"Missing required environment variable: {field}")
 
 
+
 @lru_cache
 def get_settings() -> Settings:
     settings = Settings(
         ENVIRONMENT=os.getenv("ENVIRONMENT", "development"),
+        FIREBASE_SERVICE_ACCOUNT_JSON=os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON", ""),
         DB_TYPE=os.getenv("DB_TYPE", "postgresql"),
         DATABASE_URL=os.getenv("DATABASE_URL", "sqlite:///./app.db"),
 
