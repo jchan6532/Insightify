@@ -84,7 +84,7 @@ def create_document(
         byte_size=data.byte_size,
         storage_uri=data.storage_uri,
         source=DocumentSource.UPLOAD,
-        status=DocumentStatus.PENDING,
+        status=DocumentStatus.PROCESSING,
     )
     db.add(document)
     db.commit()
