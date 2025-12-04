@@ -24,6 +24,8 @@ class Settings(BaseModel):
     AWS_SECRET_ACCESS_KEY: str
     AWS_S3_BUCKET_NAME: str
 
+    REDIS_URL: str
+
     def validate(self):
         """Validate required environment variables."""
         required = [
@@ -36,6 +38,7 @@ class Settings(BaseModel):
             "AWS_ACCESS_KEY_ID",
             "AWS_SECRET_ACCESS_KEY",
             "AWS_S3_BUCKET_NAME",
+            "REDIS_URL"
         ]
 
         for field in required:
@@ -67,6 +70,8 @@ def get_settings() -> Settings:
         AWS_ACCESS_KEY_ID=os.getenv("AWS_ACCESS_KEY_ID", ""),
         AWS_SECRET_ACCESS_KEY=os.getenv("AWS_SECRET_ACCESS_KEY", ""),
         AWS_S3_BUCKET_NAME=os.getenv("AWS_S3_BUCKET_NAME", ""),
+
+        REDIS_URL=os.getenv("REDIS_URL", "redis://localhost:6379/0")
     )
 
     settings.validate()

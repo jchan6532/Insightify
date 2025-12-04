@@ -24,6 +24,8 @@ from app.services.document_service import (
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 from app.services.storage_service import generate_object_key, create_presigned_url
+from app.core.redis_queue import doc_queue
+from app.jobs.doc_processing import process_document_job
 
 router = APIRouter(
     prefix="/documents", 
@@ -66,11 +68,7 @@ def create_document_endpoint(
         user=current_user,
     )
 
-    document = process_document(
-        db=db, 
-        document=document
-    )
-
+    doc_queue.enqueue(process_document_job, document.id)
     return document
 
 @router.put("/{document_id}/title", response_model=DocumentOut, status_code=status.HTTP_200_OK)

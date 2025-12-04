@@ -67,6 +67,10 @@ class Document(Base):
         default=DocumentStatus.PENDING,
         nullable=False
     )
+    error_message: Mapped[str | None] = mapped_column(
+        String,
+        nullable=True
+    )
     checksum: Mapped[str | None] = mapped_column(
         String(64),
         index=True,
