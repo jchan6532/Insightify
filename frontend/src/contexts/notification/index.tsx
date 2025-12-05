@@ -7,7 +7,6 @@ import {
 } from 'react';
 import { type AlertColor } from '@mui/material';
 import Notification from '@/components/Notification';
-import { useWebsocket } from '@/hooks/useWebsocket';
 
 type NotificationPayload = {
   message: string;
@@ -35,23 +34,6 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     },
     []
   );
-
-  useWebsocket({
-    onReady: (msg) => {
-      notify({
-        message: `Document ${msg.title} (${msg.status}) is complete`,
-        severity: 'success',
-      });
-    },
-    onFailed: (msg) => {
-      notify({
-        message: `Document ${msg.title} has failed (${
-          msg.error ?? 'Unable to resolve'
-        })`,
-        severity: 'error',
-      });
-    },
-  });
 
   const handleClose = () => {
     setOpen(false);
