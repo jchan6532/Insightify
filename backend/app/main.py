@@ -14,6 +14,9 @@ from app.api.routes_admin import router as admin_router
 from app.api.route_queries import router as query_router
 from app.api.routes_websockets import router as websocket_router
 from app.websockets.document.updates import redis_updates_listener
+from app.core.config import get_settings
+
+settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -27,13 +30,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-
-
-
 # Allow Vite dev origins
 origins = [
     "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    settings.FE_BASE_URL
 ]
 
 app.add_middleware(

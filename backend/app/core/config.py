@@ -4,6 +4,7 @@ import os
 
 class Settings(BaseModel):
     ENVIRONMENT: str
+    FE_BASE_URL: str
     FIREBASE_SERVICE_ACCOUNT_JSON: str
     DB_TYPE: str
     DATABASE_URL: str
@@ -31,6 +32,7 @@ class Settings(BaseModel):
         """Validate required environment variables."""
         required = [
             "ENVIRONMENT",
+            "FE_BASE_URL",
             "DATABASE_URL",
             "POSTGRES_USER",
             "POSTGRES_PASSWORD",
@@ -54,6 +56,7 @@ class Settings(BaseModel):
 def get_settings() -> Settings:
     settings = Settings(
         ENVIRONMENT=os.getenv("ENVIRONMENT", "development"),
+        FE_BASE_URL=os.getenv("FE_BASE_URL", "http://127.0.0.1:5173"),
         FIREBASE_SERVICE_ACCOUNT_JSON=os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON", ""),
         DB_TYPE=os.getenv("DB_TYPE", "postgresql"),
         DATABASE_URL=os.getenv("DATABASE_URL", "sqlite:///./app.db"),
