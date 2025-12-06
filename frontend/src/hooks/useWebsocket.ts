@@ -1,23 +1,24 @@
 import { useRef, useEffect } from 'react';
+import { type DocumentMessage } from '@/types/document/DocumentMessage.type';
 
 const WEBSOCKET_URL = import.meta.env.VITE_WS_URL;
 
-type DocumentMessage = {
-  doc_id: string;
-  title: string;
-  status: 'READY' | 'FAILED';
-  error?: string;
-};
-
-type Props = {
+type WebSocketProps = {
+  enabled: boolean;
   onReady?: (msg: DocumentMessage) => void;
   onFailed?: (msg: DocumentMessage) => void;
 };
 
-export function useWebsocket({ onReady, onFailed }: Props) {
+export function useWebsocket({ enabled, onReady, onFailed }: WebSocketProps) {
   const websocketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
+    if (!enabled) {
+      websocketRef.current?.close();
+      websocketRef.current = null;
+      return;
+    }
+
     const websocket = new WebSocket(`${WEBSOCKET_URL}/websockets/documents`);
     websocketRef.current = websocket;
 
@@ -43,5 +44,5 @@ export function useWebsocket({ onReady, onFailed }: Props) {
       websocketRef.current?.close();
       websocketRef.current = null;
     };
-  }, [onReady, onFailed]);
+  }, [enabled, onReady, onFailed]);
 }
