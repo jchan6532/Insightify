@@ -44,9 +44,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       auth,
       async (firebaseUser: FirebaseUser | null) => {
         if (!firebaseUser) {
+          const name = appUser?.name;
           setUser(null);
           setAuthToken(null);
           setAppUser(null);
+          notify({
+            message: `Good bye ${name}`,
+            severity: 'success',
+          });
           return;
         }
 
@@ -63,6 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           const res = await authApi.post('/sync');
           setAppUser(res.data);
+          notify({
+            message: `Welcome back ${res.data.name}`,
+            severity: 'success',
+          });
         } catch (err) {
           let message = 'Sync failed';
           if (axios.isAxiosError(err)) {
@@ -92,10 +101,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      notify({
-        message: `Hello ${appUser?.name}`,
-        severity: 'success',
-      });
     } catch (err) {
       const message =
         err instanceof FirebaseError
@@ -118,10 +123,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      notify({
-        message: `Welcome back ${appUser?.name}`,
-        severity: 'success',
-      });
     } catch (err) {
       const message =
         err instanceof FirebaseError
@@ -143,10 +144,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
       await signInWithPopup(auth, googleProvider);
-      notify({
-        message: `Welcome back ${appUser?.name}`,
-        severity: 'success',
-      });
     } catch (err) {
       console.error('Google sign-in failed', err);
       notify({
@@ -162,10 +159,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
       await signInWithRedirect(auth, googleProvider);
-      notify({
-        message: `Welcome back ${appUser?.name}`,
-        severity: 'success',
-      });
     } catch (err) {
       const message =
         err instanceof FirebaseError
@@ -184,14 +177,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    const name = appUser?.name;
     setLoading(true);
     try {
       await signOut(auth);
-      notify({
-        message: `Good bye ${name}`,
-        severity: 'success',
-      });
     } catch (err) {
       const message =
         err instanceof FirebaseError
