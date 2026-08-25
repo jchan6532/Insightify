@@ -12,8 +12,9 @@ def create_presigned_url(
     content_type: str, 
     expires_in: int = 3600
     ) -> str:
+
     return s3.generate_presigned_url(
-        "get_object",
+        "put_object",
         Params={
             "Bucket": BUCKET_NAME, 
             "Key": key,
