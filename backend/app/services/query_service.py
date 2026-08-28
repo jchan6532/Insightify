@@ -5,6 +5,7 @@ from openai import OpenAIError
 
 from app.schemas.query_schema import QueryRequest, QueryResponse, RetrievedChunk
 from app.models.doc_chunk import DocChunk
+from app.models.document import Document
 from app.models.user import User
 from app.models.query import Query
 from app.services.embedding_service import embed_query
@@ -24,9 +25,12 @@ def answer_query(
                 detail="Failed to embed query. Please try again later"
             ) from e
 
+        # scope the vector search to the current user's own documents
         rows = (
             db.execute(
                 select(DocChunk)
+                .join(Document, DocChunk.document_id == Document.id)
+                .where(Document.user_id == user.id)
                 .order_by(DocChunk.embedding.l2_distance(query_vec))
                 .limit(data.top_k)
             )
@@ -34,13 +38,10 @@ def answer_query(
             .all()
         )
 
-        all_chunks = rows
-        visible_chunks = [c for c in rows if c.document.user_id == user.id]
-
         try:
             answer_text = build_answer(
                 question=data.question, 
-                context=all_chunks
+                context=rows
             )
         except OpenAIError as e:
             raise HTTPException(
@@ -69,7 +70,7 @@ def answer_query(
                     chunk_id=chunk.id,
                     text=chunk.text,
                 )
-                for chunk in visible_chunks
+                for chunk in rows
             ],
         )
     except HTTPException:
