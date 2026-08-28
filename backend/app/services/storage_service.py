@@ -1,4 +1,5 @@
 import uuid
+from typing import Any
 from app.core.storage import s3, BUCKET_NAME
 
 
@@ -23,7 +24,7 @@ def create_presigned_url(
         ExpiresIn=expires_in,
     )
 
-def get_object(key: str) -> any:
+def get_object(key: str) -> Any:
     obj = s3.get_object(Bucket=BUCKET_NAME, Key=key)
     return obj
 
