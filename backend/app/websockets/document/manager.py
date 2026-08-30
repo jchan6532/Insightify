@@ -23,7 +23,7 @@ class Document_WebSocket_Manager:
                 dead.append(ws)
                 
         for ws in dead:
-            self.disconnect()
+            self.disconnect(ws)
 
 
 manager = Document_WebSocket_Manager()
