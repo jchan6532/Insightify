@@ -20,6 +20,11 @@ class Settings(BaseModel):
     DOC_CHUNK_SIZE: int
 
     OPEN_AI_API_KEY: str
+    OPENAI_LLM_MODEL: str
+
+    LLM_PROVIDER: str
+    ANTHROPIC_API_KEY: str
+    ANTHROPIC_MODEL: str
 
     AWS_REGION: str
     AWS_ACCESS_KEY_ID: str
@@ -72,6 +77,11 @@ def get_settings() -> Settings:
         DOC_CHUNK_SIZE=int(os.getenv("DOC_CHUNK_SIZE", 800)),
 
         OPEN_AI_API_KEY=os.getenv("OPEN_AI_API_KEY", ""),
+        OPENAI_LLM_MODEL=os.getenv("OPENAI_LLM_MODEL", "gpt-4.1-mini"),
+
+        LLM_PROVIDER=os.getenv("LLM_PROVIDER", "openai"),
+        ANTHROPIC_API_KEY=os.getenv("ANTHROPIC_API_KEY", ""),
+        ANTHROPIC_MODEL=os.getenv("ANTHROPIC_MODEL", "claude-3-5-haiku-20241022"),
 
         AWS_REGION=os.getenv("AWS_REGION", ""),
         AWS_ACCESS_KEY_ID=os.getenv("AWS_ACCESS_KEY_ID", ""),

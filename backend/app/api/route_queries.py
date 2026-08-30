@@ -5,6 +5,8 @@ from uuid import UUID
 from app.db.session import get_db
 from app.schemas.query_schema import QueryRequest, QueryResponse, QueryOut, QueryListOut
 from app.services.query_service import answer_query
+from app.services.ai.base import EmbeddingProvider, LLMProvider
+from app.services.ai.factory import get_embedding_provider, get_llm_provider
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 from app.models.query import Query
@@ -54,12 +56,16 @@ def query_endpoint(
     payload: QueryRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    embedding_provider: EmbeddingProvider = Depends(get_embedding_provider),
+    llm_provider: LLMProvider = Depends(get_llm_provider),
 ):
 
     answer = answer_query(
         db=db, 
         data=payload, 
-        user=current_user
+        user=current_user,
+        embedding_provider=embedding_provider,
+        llm_provider=llm_provider,
     )
     return answer
 
