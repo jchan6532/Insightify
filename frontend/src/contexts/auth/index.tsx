@@ -44,14 +44,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       auth,
       async (firebaseUser: FirebaseUser | null) => {
         if (!firebaseUser) {
-          const name = appUser?.name;
           setUser(null);
           setAuthToken(null);
           setAppUser(null);
-          notify({
-            message: `Good bye ${name}`,
-            severity: 'success',
-          });
           return;
         }
 
@@ -180,6 +175,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
       await signOut(auth);
+      notify({
+        message: `Goodbye ${appUser?.name ?? ''}`.trim(),
+        severity: 'success',
+      });
     } catch (err) {
       const message =
         err instanceof FirebaseError
