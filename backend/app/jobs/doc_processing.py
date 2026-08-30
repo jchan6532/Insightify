@@ -42,7 +42,7 @@ def process_document_job(doc_id: UUID):
             db.commit()
 
             redis.publish(
-                "document_update",
+                "document_updates",
                 json.dumps({
                     "doc_id": str(document.id),
                     "title": document.title,
