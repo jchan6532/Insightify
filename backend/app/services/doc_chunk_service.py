@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.models.document import Document
 from app.models.doc_chunk import DocChunk
-from app.services.embedding_service import embed_chunks
+from app.services.ai.factory import get_embedding_provider
 from app.services.storage_service import get_object
 from app.enums.document_mime import DocumentMime
 from app.services.text_extraction import extract_from_pdf, extract_from_word
@@ -42,7 +42,7 @@ def split_into_chunks(text: str, chunk_size: int = CHUNK_SIZE) -> list[str]:
 def process_document_chunks(db: Session, document: Document) -> None:
     text = load_document_text(document)
     chunks = split_into_chunks(text)
-    vectors = embed_chunks(chunks)
+    vectors = get_embedding_provider().embed_chunks(chunks)
 
     for idx, (chunk_text, vec) in enumerate(zip(chunks, vectors)):
         chunk = DocChunk(

@@ -1,25 +1,25 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from openai import OpenAIError
 
 from app.schemas.query_schema import QueryRequest, QueryResponse, RetrievedChunk
 from app.models.doc_chunk import DocChunk
 from app.models.document import Document
 from app.models.user import User
 from app.models.query import Query
-from app.services.embedding_service import embed_query
-from app.services.llm_service import build_answer
+from app.services.ai.base import EmbeddingProvider, LLMProvider
 
 def answer_query(
     db: Session, 
     data: QueryRequest, 
-    user: User
+    user: User,
+    embedding_provider: EmbeddingProvider,
+    llm_provider: LLMProvider,
 ) -> QueryResponse:
     try:
         try:
-            query_vec = embed_query(data.question)
-        except OpenAIError as e:
+            query_vec = embedding_provider.embed_query(data.question)
+        except Exception as e:
             raise HTTPException(
                 status_code=502,
                 detail="Failed to embed query. Please try again later"
@@ -39,11 +39,11 @@ def answer_query(
         )
 
         try:
-            answer_text = build_answer(
+            answer = llm_provider.generate_answer(
                 question=data.question, 
                 context=rows
             )
-        except OpenAIError as e:
+        except Exception as e:
             raise HTTPException(
                 status_code=502,
                 detail="Failed to generate answer. AI service may be unavailable."
@@ -52,9 +52,9 @@ def answer_query(
         q = Query(
             user_id=user.id,
             question=data.question,
-            answer = answer_text,
+            answer=answer.text,
             top_k=data.top_k,
-            model_name="gpt-4.1-mini",
+            model_name=answer.model_name,
             extra={"chunk_ids": [str(c.id) for c in rows]}
         )
         db.add(q)
@@ -63,7 +63,7 @@ def answer_query(
 
         return QueryResponse(
             query_id=q.id,
-            answer=answer_text,
+            answer=answer.text,
             chunks=[
                 RetrievedChunk(
                     document_id=chunk.document_id,
