@@ -6,8 +6,6 @@ from app.core.config import get_settings
 from app.models.doc_chunk import DocChunk
 from app.services.ai.base import LLMAnswer
 
-EMBEDDING_MODEL = "text-embedding-3-small"
-
 PROMPT_TEMPLATE = """You are a helpful assistant.
 
 Use ONLY the following context to answer the question.
@@ -23,16 +21,17 @@ Answer:"""
 class OpenAIEmbeddingProvider:
     def __init__(self) -> None:
         settings = get_settings()
-        self._client = OpenAI(api_key=settings.OPEN_AI_API_KEY)
+        self._client = OpenAI(api_key=settings.OPEN_AI_EMBEDDINGS_API_KEY)
+        self._model = settings.OPENAI_EMBEDDING_MODEL
 
     def embed_query(self, text: str) -> list[float]:
-        resp = self._client.embeddings.create(model=EMBEDDING_MODEL, input=[text])
+        resp = self._client.embeddings.create(model=self._model, input=[text])
         return resp.data[0].embedding
 
     def embed_chunks(self, chunks: list[str]) -> list[list[float]]:
         if not chunks:
             return []
-        resp = self._client.embeddings.create(model=EMBEDDING_MODEL, input=chunks)
+        resp = self._client.embeddings.create(model=self._model, input=chunks)
         return [item.embedding for item in resp.data]
 
 
