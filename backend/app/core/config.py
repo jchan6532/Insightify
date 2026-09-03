@@ -6,7 +6,7 @@ class Settings(BaseModel):
     ENVIRONMENT: str
     FE_BASE_URL: str
     FIREBASE_SERVICE_ACCOUNT_JSON: str
-    DB_TYPE: str
+
     DATABASE_URL: str
 
     POSTGRES_USER: str
@@ -21,6 +21,8 @@ class Settings(BaseModel):
 
     OPEN_AI_API_KEY: str
     OPENAI_LLM_MODEL: str
+    OPEN_AI_EMBEDDINGS_API_KEY: str
+    OPENAI_EMBEDDING_MODEL: str
 
     LLM_PROVIDER: str
     ANTHROPIC_API_KEY: str
@@ -63,7 +65,7 @@ def get_settings() -> Settings:
         ENVIRONMENT=os.getenv("ENVIRONMENT", "development"),
         FE_BASE_URL=os.getenv("FE_BASE_URL", "http://127.0.0.1:5173"),
         FIREBASE_SERVICE_ACCOUNT_JSON=os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON", ""),
-        DB_TYPE=os.getenv("DB_TYPE", "postgresql"),
+
         DATABASE_URL=os.getenv("DATABASE_URL", "sqlite:///./app.db"),
 
         POSTGRES_USER=os.getenv("POSTGRES_USER", ""),
@@ -78,6 +80,8 @@ def get_settings() -> Settings:
 
         OPEN_AI_API_KEY=os.getenv("OPEN_AI_API_KEY", ""),
         OPENAI_LLM_MODEL=os.getenv("OPENAI_LLM_MODEL", "gpt-4.1-mini"),
+        OPEN_AI_EMBEDDINGS_API_KEY=os.getenv("OPEN_AI_EMBEDDINGS_API_KEY", ""),
+        OPENAI_EMBEDDING_MODEL=os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"),
 
         LLM_PROVIDER=os.getenv("LLM_PROVIDER", "openai"),
         ANTHROPIC_API_KEY=os.getenv("ANTHROPIC_API_KEY", ""),
